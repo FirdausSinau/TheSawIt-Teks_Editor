@@ -113,7 +113,6 @@ void stack_push(Stack *s, const TextBuffer *buf) {
 
    
     memcpy(&s->entries[s->top].buf, buf, sizeof(TextBuffer));
-    s->entries[s->top].currentRow = buf->currentRow;
     s->top++;
 }
 
