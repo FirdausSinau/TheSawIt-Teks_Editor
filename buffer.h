@@ -15,7 +15,7 @@ typedef struct {
 
 typedef struct {
     TextBuffer buf;
-    int        currentRow;
+    
 } Snapshot;
 
 typedef struct {
