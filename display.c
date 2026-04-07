@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 
-
 void display_buffer(const TextBuffer *buf,
                     const char       *namaFile,
                     int               modified) {
@@ -17,12 +16,12 @@ void display_buffer(const TextBuffer *buf,
            buf->totalLines);
 
     for (i = 0; i < buf->totalLines; i++) {
-
         if (i == buf->currentRow)
             printf(">%3d : %s\n", i + 1, buf->text[i]);
         else
             printf(" %3d : %s\n", i + 1, buf->text[i]);
     }
+
     printf("===\n\n");
 }
 

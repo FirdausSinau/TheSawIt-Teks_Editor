@@ -3,7 +3,6 @@
 
 #include "buffer.h"
 
-
 void display_buffer(const TextBuffer *buf,
                     const char       *namaFile,
                     int               modified);
