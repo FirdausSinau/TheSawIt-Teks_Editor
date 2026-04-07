@@ -47,4 +47,8 @@ void buffer_push_undo(Stack *undo, Stack *redo_reset, const TextBuffer *buf);
 int  buffer_undo(Stack *undo, Stack *redo, TextBuffer *buf);
 int  buffer_redo(Stack *undo, Stack *redo, TextBuffer *buf);
 
+<<<<<<< HEAD
 #endif 
+=======
+#endif 
+>>>>>>> cfc70fc60063e08479e1129a245c30cecbb4166b
