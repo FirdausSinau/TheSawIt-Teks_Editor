@@ -1,37 +1,3 @@
-/*
- * main.c - Text Editor CLI
- *
- * Tanggung jawab file ini HANYA:
- *   1. Inisialisasi semua struktur data
- *   2. Main loop (baca input -> proses -> ulangi)
- *   3. Parsing dan dispatch perintah
- *
- * Semua tampilan -> display.c
- * Semua operasi teks -> buffer.c
- * Semua operasi file -> file.c
- * Semua find/replace -> replace.c
- *
- * -------------------------------------------------------
- * Perintah i - Opsi A:
- *   sscanf memisahkan perintah dan argumen berdasarkan spasi.
- *   Satu spasi pertama adalah pemisah perintah-argumen.
- *   Teks yang masuk adalah PERSIS apa yang ditulis setelah
- *   spasi pertama.
- *
- *   Contoh:
- *     "i halo"      -> argumen = "halo"
- *     "i halo dunia"-> argumen = "halo dunia"
- *
- *   Spasi antar kata di baris aktif ditangani otomatis:
- *   jika baris sudah ada isi, tambah ' ' sebelum teks baru.
- * -------------------------------------------------------
- *
- * Struktur array yang digunakan:
- *   TextBuffer.text[MAX_ROW][MAX_COL] -> array 2D statis
- *   Stack.entries[HISTORY_SIZE]       -> array statis untuk undo/redo
- *   Tidak ada array dinamis, tidak ada pointer array.
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -43,23 +9,12 @@
 
 #define CMD_MAX 512
 
-/* ============================================================
- * State global editor
- * Hanya 4 variabel: buffer, dua stack, nama file, flag modified
- * ============================================================ */
 static TextBuffer buf;
 static Stack      undoStack;
 static Stack      redoStack;
 static char       namaFile[256];
 static int        modified;
 
-/* ============================================================
- * FUNGSI HELPER
- * ============================================================ */
-
-/*
- * tanya_konfirmasi - Cetak pertanyaan y/n, return 1 jika user jawab y/Y
- */
 static int tanya_konfirmasi(const char *pertanyaan) {
     char jawab[8];
     printf("%s (y/n): ", pertanyaan);
@@ -68,39 +23,13 @@ static int tanya_konfirmasi(const char *pertanyaan) {
     return (jawab[0] == 'y' || jawab[0] == 'Y');
 }
 
-/*
- * bersihkan_newline - Hapus \r dan \n di akhir string
- */
 static void bersihkan_newline(char *str) {
     int len = (int)strlen(str);
     if (len > 0 && str[len-1] == '\n') str[--len] = '\0';
     if (len > 0 && str[len-1] == '\r') str[--len] = '\0';
 }
 
-/* ============================================================
- * HANDLER TIAP PERINTAH
- * ============================================================ */
 
-/*
- * cmd_insert - Tambah teks di akhir baris aktif
- *
- * Opsi A: sscanf sudah memisahkan argumen dari perintah.
- * Satu spasi pertama adalah pemisah, sisanya adalah teks asli.
- *
- * Spasi antar kata ditangani otomatis:
- *   Jika baris aktif sudah ada isi (lineLength > 0),
- *   tambahkan ' ' sebelum teks baru.
- *   Jika baris masih kosong, langsung tambahkan teks.
- *
- * Contoh:
- *   Baris aktif: "Halo"
- *   > i dunia
- *   Hasil: "Halo dunia"   <- spasi otomatis
- *
- *   Baris aktif: ""
- *   > i Halo
- *   Hasil: "Halo"         <- tidak ada spasi ekstra
- */
 static void cmd_insert(const char *teks) {
     int row;
 
@@ -112,7 +41,6 @@ static void cmd_insert(const char *teks) {
     row = buf.currentRow;
     buffer_push_undo(&undoStack, &redoStack, &buf);
 
-    /* Tambah spasi otomatis jika baris sudah ada isi */
     if (buf.lineLength[row] > 0) {
         buffer_insert(&buf, " ");
     }
@@ -123,9 +51,7 @@ static void cmd_insert(const char *teks) {
     display_buffer(&buf, namaFile, modified);
 }
 
-/*
- * cmd_insert_baris - Buat baris baru di bawah baris aktif
- */
+
 static void cmd_insert_baris(const char *teks) {
     buffer_push_undo(&undoStack, &redoStack, &buf);
     buffer_insert_baris(&buf, teks);
@@ -134,13 +60,7 @@ static void cmd_insert_baris(const char *teks) {
     display_buffer(&buf, namaFile, modified);
 }
 
-/*
- * cmd_hapus_karakter - Hapus n karakter terakhir di baris aktif
- *
- * Validasi input: jika argumen bukan angka valid atau negatif,
- * gunakan default 1. Tidak akan crash karena atoi("abc") = 0
- * dan kita clamp ke minimum 1.
- */
+
 static void cmd_hapus_karakter(const char *argumen) {
     int jumlah = 1;
 
@@ -160,9 +80,7 @@ static void cmd_hapus_karakter(const char *argumen) {
     display_buffer(&buf, namaFile, modified);
 }
 
-/*
- * cmd_hapus_baris - Hapus seluruh baris aktif
- */
+
 static void cmd_hapus_baris(void) {
     int baris_lama = buf.currentRow + 1;
     buffer_push_undo(&undoStack, &redoStack, &buf);
@@ -172,12 +90,7 @@ static void cmd_hapus_baris(void) {
     display_buffer(&buf, namaFile, modified);
 }
 
-/*
- * cmd_goto - Pindah ke baris nomor tertentu
- *
- * Validasi: jika argumen kosong atau bukan angka, beri pesan error.
- * buffer_goto() sudah melakukan clamp ke range yang valid.
- */
+
 static void cmd_goto(const char *argumen) {
     int nomor;
 
@@ -197,17 +110,7 @@ static void cmd_goto(const char *argumen) {
     display_buffer(&buf, namaFile, modified);
 }
 
-/*
- * cmd_replace - Cari dan ganti teks dengan dua prompt terpisah
- *
- * Tidak menggunakan '|' sebagai pemisah.
- * Program bertanya satu per satu:
- *   Cari    : <user ketik>
- *   Ganti   : <user ketik>
- *
- * Prompt menggunakan ':' sebagai pemisah label-input,
- * konsisten dengan format tampilan.
- */
+
 static void cmd_replace(void) {
     char cari[CMD_MAX];
     char ganti[CMD_MAX];
@@ -241,9 +144,6 @@ static void cmd_replace(void) {
     }
 }
 
-/*
- * cmd_buka - Buka file dari disk
- */
 static void cmd_buka(const char *argumen) {
     if (argumen[0] == '\0') {
         printf("[ERROR] Masukkan nama file. Contoh: o catatan.txt\n");
@@ -272,9 +172,6 @@ static void cmd_buka(const char *argumen) {
     }
 }
 
-/*
- * cmd_simpan - Simpan buffer ke file di disk
- */
 static void cmd_simpan(const char *argumen) {
     if (argumen[0] != '\0') {
         strncpy(namaFile, argumen, sizeof(namaFile) - 1);
@@ -294,9 +191,6 @@ static void cmd_simpan(const char *argumen) {
     }
 }
 
-/*
- * cmd_tutup - Tutup file dan reset buffer
- */
 static void cmd_tutup(void) {
     if (modified) {
         if (!tanya_konfirmasi("[PERINGATAN] Ada perubahan belum disimpan. Lanjut?"))
@@ -315,12 +209,6 @@ static void cmd_tutup(void) {
     display_buffer(&buf, namaFile, modified);
 }
 
-/*
- * cmd_hapus_file - Hapus file dari disk secara permanen
- *
- * Menggunakan remove() dari <stdio.h> — standar C99.
- * Meminta konfirmasi karena tidak bisa di-undo.
- */
 static void cmd_hapus_file(const char *argumen) {
     if (argumen[0] == '\0') {
         printf("[ERROR] Masukkan nama file. Contoh: del catatan.txt\n");
@@ -348,9 +236,6 @@ static void cmd_hapus_file(const char *argumen) {
     }
 }
 
-/*
- * cmd_undo - Batalkan perubahan terakhir
- */
 static void cmd_undo(void) {
     if (buffer_undo(&undoStack, &redoStack, &buf)) {
         modified = 1;
@@ -361,9 +246,6 @@ static void cmd_undo(void) {
     }
 }
 
-/*
- * cmd_redo - Ulangi perubahan yang di-undo
- */
 static void cmd_redo(void) {
     if (buffer_redo(&undoStack, &redoStack, &buf)) {
         modified = 1;
@@ -374,9 +256,6 @@ static void cmd_redo(void) {
     }
 }
 
-/*
- * cmd_keluar - Keluar dari program
- */
 static void cmd_keluar(void) {
     if (modified) {
         if (!tanya_konfirmasi("[PERINGATAN] Ada perubahan belum disimpan. Keluar?"))
@@ -389,11 +268,6 @@ static void cmd_keluar(void) {
     exit(0);
 }
 
-/* ============================================================
- * DISPATCHER
- * Terima satu baris input, pecah jadi perintah + argumen,
- * panggil handler yang sesuai.
- * ============================================================ */
 static void proses_perintah(char *input) {
     char perintah[16];
     char argumen[CMD_MAX];
@@ -424,27 +298,20 @@ static void proses_perintah(char *input) {
     }
 }
 
-/* ============================================================
- * MAIN
- * ============================================================ */
 int main(int argc, char *argv[]) {
     char cmd[CMD_MAX];
     int  len;
 
-    /* ----- Inisialisasi ----- */
     buffer_init(&buf);
     stack_init(&undoStack);
     stack_init(&redoStack);
     namaFile[0] = '\0';
     modified    = 0;
 
-    /* ----- Layar pembuka ----- */
     printf("\n=== Text Editor CLI  |  Array 2D + Stack ===\n\n");
 
-    /* ----- Tampilkan bantuan di awal ----- */
     display_bantuan();
 
-    /* ----- Buka file dari argumen jika ada ----- */
     if (argc > 1) {
         if (file_open(&buf, argv[1])) {
             strncpy(namaFile, argv[1], sizeof(namaFile) - 1);
@@ -458,17 +325,9 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    /* Tampilkan buffer awal */
     display_buffer(&buf, namaFile, modified);
 
-    /* ----- Main loop ----- */
     while (1) {
-        /*
-         * Prompt format: [namafile* | brs X/Y]>
-         *   *  = ada perubahan belum disimpan
-         *   X  = baris aktif saat ini
-         *   Y  = total baris
-         */
         printf("[%s%s | brs %d/%d]> ",
                namaFile[0] ? namaFile : "baru",
                modified     ? "*"     : "",
