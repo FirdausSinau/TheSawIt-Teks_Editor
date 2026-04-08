@@ -13,23 +13,14 @@ int replace_text(TextBuffer *buf, const char *cari, const char *ganti) {
         char baruLine[MAX_COL];
         int  baruLen = 0;
         int  i       = 0;
+        int  rowLen  = buf->lineLength[r];  /* cache biar ga akses struct tiap iterasi */
 
-        while (i < buf->lineLength[r]) {
-            int j, cocok = 0;
+        while (i < rowLen) {
+            if (i <= rowLen - cariLen &&
+                memcmp(buf->text[r] + i, cari, (size_t)cariLen) == 0) {
 
-            if (i <= buf->lineLength[r] - cariLen) {
-                cocok = 1;
-                for (j = 0; j < cariLen; j++) {
-                    if (buf->text[r][i + j] != cari[j]) {
-                        cocok = 0;
-                        break;
-                    }
-                }
-            }
-
-            if (cocok) {
                 if (baruLen + gantiLen < MAX_COL - 1) {
-                    memcpy(baruLine + baruLen, ganti, gantiLen);
+                    memcpy(baruLine + baruLen, ganti, (size_t)gantiLen);
                     baruLen += gantiLen;
                 }
                 i += cariLen;
@@ -42,8 +33,7 @@ int replace_text(TextBuffer *buf, const char *cari, const char *ganti) {
         }
 
         baruLine[baruLen] = '\0';
-
-        memcpy(buf->text[r], baruLine, baruLen + 1);
+        memcpy(buf->text[r], baruLine, (size_t)(baruLen + 1));
         buf->lineLength[r] = baruLen;
     }
 
