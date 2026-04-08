@@ -122,7 +122,6 @@ int stack_pop(Stack *s, TextBuffer *buf) {
 
     s->top--;
     memcpy(buf, &s->entries[s->top].buf, sizeof(TextBuffer));
-    buf->currentRow = s->entries[s->top].currentRow;
     return 1;
 }
 
