@@ -1,19 +1,27 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-#define MAX_ROW       500
-#define MAX_COL       200
-#define HISTORY_SIZE   20
+#include <stdlib.h>
+#define MAX_COL      200
+#define HISTORY_SIZE  20
+
+
+typedef struct Node {
+    char        text[MAX_COL];
+    int         length;
+    struct Node *next;
+} Node;
 
 typedef struct {
-    char text[MAX_ROW][MAX_COL];
-    int  lineLength[MAX_ROW];
-    int  totalLines;
-    int  currentRow;
+    Node *head;
+    int   totalLines;
+    int   currentRow;
 } TextBuffer;
 
 typedef struct {
-    TextBuffer buf;
+    Node *head;
+    int   totalLines;
+    int   currentRow;
 } Snapshot;
 
 typedef struct {
@@ -21,23 +29,25 @@ typedef struct {
     int      top;
 } Stack;
 
-/* Buffer */
-void buffer_init(TextBuffer *buf);
-void buffer_insert(TextBuffer *buf, const char *teks);
-void buffer_insert_baris(TextBuffer *buf, const char *teks);
-void buffer_backspace(TextBuffer *buf, int n);
-void buffer_hapus_baris(TextBuffer *buf);
-void buffer_goto(TextBuffer *buf, int nomor);
-void buffer_display(const TextBuffer *buf);
+Node *allocNode (void);
+void  freeNoden(Node *node);
 
-/* Stack */
-void stack_init(Stack *s);
-void stack_push(Stack *s, const TextBuffer *buf);
-int  stack_pop(Stack *s, TextBuffer *buf);
+void  bufferInsertBaris (TextBuffer *buf, const char *teks);
+void  bufferHapusBaris (TextBuffer *buf);
 
-/* Undo / Redo */
-void buffer_push_undo(Stack *undo, Stack *redo, const TextBuffer *buf);
-int  buffer_undo(Stack *undo, Stack *redo, TextBuffer *buf);
-int  buffer_redo(Stack *undo, Stack *redo, TextBuffer *buf);
+Node *getNode (TextBuffer *buf, int n);
+void  bufferGoton(TextBuffer *buf, int nomor);
+void  bufferInsertn(TextBuffer *buf, const char *teks);
+void  bufferBackspacen(TextBuffer *buf, int n);
+
+void  bufferInit (TextBuffer *buf);
+void  stackInit (Stack *s);
+void  stackPushn(Stack *s, const TextBuffer *buf);
+int   stackPop (Stack *s, TextBuffer *buf);
+void  bufferPushUndo(Stack *undo, Stack *redo, const TextBuffer *buf);
+int   bufferUndom(Stack *undo, Stack *redo, TextBuffer *buf);
+int   bufferRedo (Stack *undo, Stack *redo, TextBuffer *buf);
+
+void  bufferDisplay (const TextBuffer *buf);
 
 #endif
