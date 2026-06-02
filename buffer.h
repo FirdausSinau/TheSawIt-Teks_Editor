@@ -30,22 +30,22 @@ typedef struct {
 } Stack;
 
 Node *allocNode(void);
-void  freeNoden(Node *node);
+void  freeNode(Node *node);
 
 void  bufferInsertBaris(TextBuffer *buf, char *teks);
 void  bufferHapusBaris(TextBuffer *buf);
 
 Node *getNode(TextBuffer *buf, int n);
-void  bufferGoton(TextBuffer *buf, int nomor);
+void  bufferGoto(TextBuffer *buf, int nomor);
 void  bufferInsert(TextBuffer *buf, char *teks);
-void  bufferBackspacen(TextBuffer *buf, int n);
+void  bufferBackspace(TextBuffer *buf, int n);
 
 void  bufferInit(TextBuffer *buf);
 void  stackInit(Stack *s);
-void  stackPushn(Stack *s, TextBuffer *buf);
-int   stackPop (Stack *s, TextBuffer *buf);
+void  stackPush(Stack *s, TextBuffer *buf);
+int   stackPop(Stack *s, TextBuffer *buf);
 void  bufferPushUndo(Stack *undo, Stack *redo, TextBuffer *buf);
-int   bufferUndom(Stack *undo, Stack *redo, TextBuffer *buf);
-int   bufferRedo (Stack *undo, Stack *redo, TextBuffer *buf);
+int   bufferUndo(Stack *undo, Stack *redo, TextBuffer *buf);
+int   bufferRedo(Stack *undo, Stack *redo, TextBuffer *buf);
 
 #endif
