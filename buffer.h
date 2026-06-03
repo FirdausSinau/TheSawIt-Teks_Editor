@@ -7,47 +7,45 @@
 
 
 typedef struct Node {
-    char        text[MAX_COL];
-    int         length;
+    char text[MAX_COL];
+    int length;
     struct Node *next;
 } Node;
 
 typedef struct {
     Node *head;
-    int   totalLines;
-    int   currentRow;
+    int totalLines;
+    int currentRow;
 } TextBuffer;
 
 typedef struct {
     Node *head;
-    int   totalLines;
-    int   currentRow;
+    int totalLines;
+    int currentRow;
 } Snapshot;
 
 typedef struct {
     Snapshot entries[HISTORY_SIZE];
-    int      top;
+    int top;
 } Stack;
 
-Node *allocNode (void);
-void  freeNoden(Node *node);
+Node *allocNode(void);
+void  freeNode(Node *node);
 
-void  bufferInsertBaris (TextBuffer *buf, const char *teks);
-void  bufferHapusBaris (TextBuffer *buf);
+void  bufferInsertBaris(TextBuffer *buf, char *teks);
+void  bufferHapusBaris(TextBuffer *buf);
 
-Node *getNode (TextBuffer *buf, int n);
-void  bufferGoton(TextBuffer *buf, int nomor);
-void  bufferInsertn(TextBuffer *buf, const char *teks);
-void  bufferBackspacen(TextBuffer *buf, int n);
+Node *getNode(TextBuffer *buf, int n);
+void  bufferGoto(TextBuffer *buf, int nomor);
+void  bufferInsert(TextBuffer *buf, char *teks);
+void  bufferBackspace(TextBuffer *buf, int n);
 
-void  bufferInit (TextBuffer *buf);
-void  stackInit (Stack *s);
-void  stackPushn(Stack *s, const TextBuffer *buf);
-int   stackPop (Stack *s, TextBuffer *buf);
-void  bufferPushUndo(Stack *undo, Stack *redo, const TextBuffer *buf);
-int   bufferUndom(Stack *undo, Stack *redo, TextBuffer *buf);
-int   bufferRedo (Stack *undo, Stack *redo, TextBuffer *buf);
-
-void  bufferDisplay (const TextBuffer *buf);
+void  bufferInit(TextBuffer *buf);
+void  stackInit(Stack *s);
+void  stackPush(Stack *s, TextBuffer *buf);
+int   stackPop(Stack *s, TextBuffer *buf);
+void  bufferPushUndo(Stack *undo, Stack *redo, TextBuffer *buf);
+int   bufferUndo(Stack *undo, Stack *redo, TextBuffer *buf);
+int   bufferRedo(Stack *undo, Stack *redo, TextBuffer *buf);
 
 #endif
