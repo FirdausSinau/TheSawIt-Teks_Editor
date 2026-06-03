@@ -3,10 +3,8 @@
 
 #include "buffer.h"
 
-void display_buffer(const TextBuffer *buf,
-                    const char       *namaFile,
-                    int               modified);
+void displayBuffer(TextBuffer *buf, char *namaFile, int modified);
 
-void display_bantuan(void);
+void displayBantuan(void);
 
 #endif
