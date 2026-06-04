@@ -65,9 +65,10 @@ void stackPush(Stack *s, TextBuffer *buf) {
         newNode = (Node *)malloc(sizeof(Node)); 
         for (j = 0; j <= cur->length; j++) {
             newNode->text[j] = cur->text[j]; 
-            newNode->length = cur->length; 
-            newNode->next   = NULL; 
         }
+        newNode->length = cur->length; 
+        newNode->next   = NULL; 
+        
         if (snapHead == NULL) { 
             snapHead = newNode; 
             snapTail = newNode; 
@@ -93,7 +94,7 @@ int stackPop(Stack *s, TextBuffer *buf){
         return 0;
     }
 
-    s->top--;
+    
     del = buf->head; 
 
     while(del != NULL){ 
@@ -102,6 +103,7 @@ int stackPop(Stack *s, TextBuffer *buf){
         del = temp; 
     }
 
+    s->top--;
     buf->head = s->entries[s->top].head; 
     buf->totalLines = s->entries[s->top].totalLines; 
     buf->currentRow = s->entries[s->top].currentRow; 
