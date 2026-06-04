@@ -60,5 +60,11 @@ int fileSave(const TextBuffer *buf, const char *filename) {
 
 
 void fileClose(TextBuffer *buf) {
+	Node *cur = buf->head;
+    while (cur != NULL) {
+        Node *next = cur->next;
+        free(cur);
+        cur = next;
+    }
     bufferInit(buf);
 }
