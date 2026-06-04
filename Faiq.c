@@ -10,7 +10,7 @@ void stackInit(Stack *s){
 	s->top = 0; //nilai top dari stack snapshot di set ke 0 
 }
 
-void stackPush(Stack *s, const TextBuffer *buf) {
+void stackPush(Stack *s, const TextBuffer *buf) { //
     int   j; //variabel indeks loop
     Node *cur; //pointer traversal (yang sedang ditunjuk) untuk linked list buffer asi
     Node *newNode; //pointer penunjuk node baru (salinan) yg akan dialokasikan
@@ -58,8 +58,32 @@ void stackPush(Stack *s, const TextBuffer *buf) {
     s->top++; //top naik satu indeks
 }
 
-int stackPop(Stack *s, TextBuffer *buf){
-	
+int stackPop(Stack *s, TextBuffer *buf){ //hapus sebuah list snapshot untuk dikirim kembali ke list buffer
+	Node *del; //pointer traversal penunjuk node buffer yang akan dibebaskan
+    Node *temp; //pointer pemegang list next dari del
+
+    if(s->top == 0){ //cek isi stack snapshot, jika kosong
+        return 0; //return 0, tidak ada snapshot yang bisa di pop
+    }
+
+    s->top--;
+    del = buf->head; //pointer traversal del diarahkan ke head dari list buffer
+
+    while(del != NULL){ //selama del belum nunjuk ke NULL
+        temp = del->next; //temp pegang list dari next-nya del
+        free(del); //free node yang ditunjuk del
+        del = temp; //del nunjuk yang ditunjuk temp
+    }
+
+    buf->head = s->entries[s->top].head; //head buffer nunjuk yang ditunjuk head snapshot di stack bagian top
+    buf->totalLines = s->entries[s->top].totalLines; //nilai totalLines buffer diisi nilai totalLines snapshot di stack bagian top
+    buf->currentRow = s->entries[s->top].currentRow; //nilai currentRow buffer diisi nilai currentRow snapshot di stack bagian top
+
+    s->entries[s->top].head = NULL; //head dari list snapshot top dari stack arahkan ke NULL
+    s->entries[s->top].totalLines = 0; //nilai totalLines nya reset ke 0
+    s->entries[s->top].currentRow = 0; //nilai currentRow nya reset ke 0
+
+    return 1; //return 1, stackPop berhasil dijalankan
 }
 
 int bufferUndo(Stack *undo, Stack *redo, TextBuffer *buf){
