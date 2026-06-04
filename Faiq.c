@@ -1,16 +1,36 @@
 #include "buffer.h"
 
 void bufferInit(TextBuffer *buf) {
-	buf->head = NULL; //head linked list buffer ditunjuk ke NULL
-	buf->totalLines = 0; //nilai total baris di set ke 0
-	buf->currentRow = 0; //nilai penunjuk baris aktif di set ke 0
+	Node *awal = (Node *)malloc(sizeof(Node)); //malloc sebuah node bernama awal di memori 
+
+    awal->text[0] = '\0'; //isi indeks 0 dengan null terminator agar bersih dari sampah memori 
+    awal->length = 0; //nilai panjang baris set ke 0
+    awal->next = NULL; //next dari node awal set ke NULL
+
+    buf->head = awal; //head dari buf arahkan ke node awal
+    buf->totalLines = 1; //nilai total baris buf set ke 1
+    buf->currentRow = 0; //nilai currentrow set di 0
 }
 
 void stackInit(Stack *s){
+    int i; //variabel traversing indeks array stack snapshot
+    Node *cur; //penunjuk traversal di stack snapshot
+    Node *tmp; //pemegang list next dari cur
+
+    for (i = 0; i < s->top; i++){ //loop tiap slot snapshot yang terisi sampe top-1
+        cur = s->entries[i].head; //cur nunjuk ke head linked list salinan (snapshot) ke-i
+        while(cur != NULL){ //selama cur belum nunjuk NULL
+            tmp = cur->next; //tmp tampung list next dari cur
+            free(cur); //free node yang ditunjuk cur
+            cur = tmp; //cur maju ke next node
+        }
+        s->entries[i].head = NULL; //setelah node kosong (free) arahin pointer head ke NULL
+    }
+
 	s->top = 0; //nilai top dari stack snapshot di set ke 0 
 }
 
-void stackPush(Stack *s, const TextBuffer *buf) { //
+void stackPush(Stack *s, TextBuffer *buf) { //
     int   j; //variabel indeks loop
     Node *cur; //pointer traversal (yang sedang ditunjuk) untuk linked list buffer asi
     Node *newNode; //pointer penunjuk node baru (salinan) yg akan dialokasikan
