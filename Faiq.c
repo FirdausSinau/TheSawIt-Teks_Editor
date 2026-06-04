@@ -3,6 +3,14 @@
 void bufferInit(TextBuffer *buf) {
 	Node *awal = (Node *)malloc(sizeof(Node)); 
 
+    if (awal == NULL){ 
+        printf("ERROR! Gagal Alokasi. Program tidak bisa dilanjutkan.");
+        buf->head = NULL; 
+        buf->totalLines = 0; 
+        buf->currentRow = 0; 
+        return; 
+    }
+
     awal->text[0] = '\0'; 
     awal->length = 0; 
     awal->next = NULL; 

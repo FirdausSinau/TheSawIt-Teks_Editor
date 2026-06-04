@@ -9,7 +9,7 @@ void displayBuffer(TextBuffer *buf, char *namaFile, int modified){
     char *tampilNama; 
     char *tampilModified; 
 
-    if (namaFile[0] != NULL){ 
+    if (namaFile[0] != '\0'){ 
         tampilNama = namaFile; 
     } else { 
         tampilNama = "(belum disimpan)"; 
@@ -28,9 +28,9 @@ void displayBuffer(TextBuffer *buf, char *namaFile, int modified){
 
     while(cur != NULL){ 
         if(i == buf->currentRow){ 
-            penanda = ">"; 
+            penanda = '>'; 
         } else{ 
-            penanda = " "; 
+            penanda = ' '; 
         }
 
         printf("%c%3d : %s\n", penanda, i + 1, cur->text); 
@@ -40,8 +40,6 @@ void displayBuffer(TextBuffer *buf, char *namaFile, int modified){
     }
 
     printf("===\n\n"); 
-}
-
 }
 
 void displayBantuan(void) {
