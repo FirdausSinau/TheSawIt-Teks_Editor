@@ -1,18 +1,17 @@
 #include "buffer.h"
 #include <string.h>
-#include <stdlib.h>
 #include <stdio.h>
 
 Node *getNode(TextBuffer *buf, int n) {
-    Node *ptr = buf->head;
+    Node *pointer = buf->head;
     int i;
 
     for (i = 0; i < n; i++) {
-        if (ptr == NULL) return NULL;
-        ptr = ptr->next;
+        if (pointer == NULL) return NULL;
+        pointer = pointer->next;
     }
 
-    return ptr;
+    return pointer;
 }
 
 void bufferGoto(TextBuffer *buf, int nomor) {
@@ -21,7 +20,7 @@ void bufferGoto(TextBuffer *buf, int nomor) {
     buf->currentRow = nomor - 1;
 }
 
-void bufferInsert(TextBuffer *buf, char *teks) {
+void bufferInsert(TextBuffer *buf, const char *teks) {
     Node *node = getNode(buf, buf->currentRow);
     int len = (int)strlen(teks);
     int i;
