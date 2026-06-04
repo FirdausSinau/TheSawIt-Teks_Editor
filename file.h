@@ -3,10 +3,10 @@
 
 #include "buffer.h"
 
-int  file_open(TextBuffer *buf, const char *filename);
+int  fileOpen(TextBuffer *buf, const char *filename);
 
-int  file_save(const TextBuffer *buf, const char *filename);
+int  fileSave(const TextBuffer *buf, const char *filename);
 
-void file_close(TextBuffer *buf);
+void fileClose(TextBuffer *buf);
 
 #endif
