@@ -25,7 +25,13 @@ void bufferInsert(TextBuffer *buf, const char *teks) {
     int len = (int)strlen(teks);
     int i;
 
-    if (node == NULL) return;
+    if (node == NULL) {
+        if (buf->head == NULL) {
+            bufferInit(buf);
+        }
+        node = buf->head;
+        buf->currentRow = 0;
+    }
 
     for (i = 0; i < len; i++) {
         if (node->length >= MAX_COL - 1) break;
@@ -39,7 +45,13 @@ void bufferBackspace(TextBuffer *buf, int n) {
     Node *node = getNode(buf, buf->currentRow);
     int i;
 
-    if (node == NULL) return;
+    if (node == NULL) {
+        if (buf->head == NULL) {
+            bufferInit(buf);
+        }
+        node = buf->head;
+        buf->currentRow = 0;
+    }
 
     for (i = 0; i < n; i++) {
         if (node->length == 0) break;
