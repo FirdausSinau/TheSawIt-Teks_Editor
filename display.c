@@ -2,28 +2,49 @@
 #include <stdio.h>
 #include <string.h>
 
-void display_buffer(const TextBuffer *buf,
-                    const char       *namaFile,
-                    int               modified) {
-    int i;
+void displayBuffer(TextBuffer *buf, char *namaFile, int modified){
+    Node *cur; 
+    int i; 
+    char penanda; 
+    char *tampilNama; 
+    char *tampilModified; 
 
-    printf("\n=== File: %s%s  |  Baris: %d/%d ===\n",
-           namaFile[0] ? namaFile : "(belum disimpan)",
-           modified     ? " [*]"  : "",
-           buf->currentRow + 1,
-           buf->totalLines);
-
-    for (i = 0; i < buf->totalLines; i++) {
-        printf("%c%3d : %s\n",
-               (i == buf->currentRow) ? '>' : ' ',
-               i + 1,
-               buf->text[i]);
+    if (namaFile[0] != NULL){ 
+        tampilNama = namaFile; 
+    } else { 
+        tampilNama = "(belum disimpan)"; 
     }
 
-    printf("===\n\n");
+    if (modified == 1){ 
+        tampilModified = " [*]"; 
+    } else if (modified == 0){ 
+        tampilModified = ""; 
+    }
+
+    printf("\n=== File: %s%s  |  Baris: %d/%d ===\n", tampilNama, tampilModified, buf->currentRow + 1, buf->totalLines);
+
+    cur = buf->head; 
+    i = 0; 
+
+    while(cur != NULL){ 
+        if(i == buf->currentRow){ 
+            penanda = ">"; 
+        } else{ 
+            penanda = " "; 
+        }
+
+        printf("%c%3d : %s\n", penanda, i + 1, cur->text); 
+
+        cur = cur->next; 
+        i++; 
+    }
+
+    printf("===\n\n"); 
 }
 
-void display_bantuan(void) {
+}
+
+void displayBantuan(void) {
     puts(
         "\n+-------------+------------------------------------------+\n"
         "| Perintah    | Keterangan                               |\n"
