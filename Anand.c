@@ -26,7 +26,7 @@ void bufferInsertBaris(TextBuffer *buf, char *teks) {
 
     strncpy(baru->text, teks, MAX_COL - 1);
     baru->text[MAX_COL - 1] = '\0';
-    baru->length = strlen(teks);
+    baru->length = strlen(baru->text);
 
     Node *current = getNode(buf, buf->currentRow);
 
