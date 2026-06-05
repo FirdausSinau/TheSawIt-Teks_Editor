@@ -3,7 +3,7 @@
 #include <string.h>
 
 
-int fileOpen(TextBuffer *buf, const char *filename) {
+int fileOpen(TextBuffer *buf, char *filename) {
     FILE *fp;
     char  barisTemp[MAX_COL + 4];
     int firstLine = 1;
@@ -40,7 +40,7 @@ int fileOpen(TextBuffer *buf, const char *filename) {
 }
 
 
-int fileSave(const TextBuffer *buf, const char *filename) {
+int fileSave(const TextBuffer *buf, char *filename) {
     FILE *fp;
     Node *node;
 
