@@ -2,6 +2,7 @@
 #define BUFFER_H
 
 #include <stdlib.h>
+#include <stdio.h>
 #define MAX_COL      200
 #define HISTORY_SIZE  20
 
