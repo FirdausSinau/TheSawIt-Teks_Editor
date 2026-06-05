@@ -3,6 +3,6 @@
 
 #include "buffer.h"
 
-int replace_text(TextBuffer *buf, const char *cari, const char *ganti);
+int replaceText(TextBuffer *buf, char *cari, char *ganti);
 
 #endif

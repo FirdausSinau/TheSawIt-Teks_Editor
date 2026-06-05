@@ -20,18 +20,12 @@ void bufferGoto(TextBuffer *buf, int nomor) {
     buf->currentRow = nomor - 1;
 }
 
-void bufferInsert(TextBuffer *buf, const char *teks) {
+void bufferInsert(TextBuffer *buf, char *teks) {
     Node *node = getNode(buf, buf->currentRow);
     int len = (int)strlen(teks);
     int i;
 
-    if (node == NULL) {
-        if (buf->head == NULL) {
-            bufferInit(buf);
-        }
-        node = buf->head;
-        buf->currentRow = 0;
-    }
+    if (node == NULL) return;
 
     for (i = 0; i < len; i++) {
         if (node->length >= MAX_COL - 1) break;
@@ -45,13 +39,7 @@ void bufferBackspace(TextBuffer *buf, int n) {
     Node *node = getNode(buf, buf->currentRow);
     int i;
 
-    if (node == NULL) {
-        if (buf->head == NULL) {
-            bufferInit(buf);
-        }
-        node = buf->head;
-        buf->currentRow = 0;
-    }
+    if (node == NULL) return;
 
     for (i = 0; i < n; i++) {
         if (node->length == 0) break;
