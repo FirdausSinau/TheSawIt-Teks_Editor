@@ -7,7 +7,7 @@ void displayBuffer(TextBuffer *buf, char *namaFile, int modified){
     int i; 
     char penanda; 
     char *tampilNama; 
-    char *tampilModified; 
+    char *tampilModified = ""; 
 
     if (namaFile[0] != '\0'){ 
         tampilNama = namaFile; 
