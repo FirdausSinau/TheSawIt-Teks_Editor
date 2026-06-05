@@ -22,20 +22,14 @@ void bufferInit(TextBuffer *buf) {
 
 void stackInit(Stack *s){
     int i; 
-    Node *cur; 
-    Node *tmp; 
 
-    for (i = 0; i < s->top; i++){ 
-        cur = s->entries[i].head; 
-        while(cur != NULL){ 
-            tmp = cur->next; 
-            free(cur); 
-            cur = tmp; 
-        }
+    for (i = 0; i < HISTORY_SIZE; i++){ 
         s->entries[i].head = NULL; 
+        s->entries[i].totalLines = 0;
+        s->entries[i].currentRow = 0;
     }
 
-	s->top = 0; 
+    s->top = 0; 
 }
 
 void stackPush(Stack *s, TextBuffer *buf) { 
