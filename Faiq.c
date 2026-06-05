@@ -110,7 +110,6 @@ int stackPop(Stack *s, TextBuffer *buf){
 }
 
 void  bufferPushUndo(Stack *undo, Stack *redo, TextBuffer *buf){
-    int   i;
     Node *del;
     Node *tmp;
 
