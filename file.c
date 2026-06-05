@@ -12,6 +12,7 @@ int fileOpen(TextBuffer *buf, const char *filename) {
     fp = fopen(filename, "r");
     if (!fp) return 0;
 
+    fileClose(buf);
     bufferInit(buf);
 
     while (fgets(barisTemp, (int)sizeof(barisTemp), fp)) {
@@ -42,29 +43,33 @@ int fileOpen(TextBuffer *buf, const char *filename) {
 int fileSave(const TextBuffer *buf, const char *filename) {
     FILE *fp;
     Node *node;
-    int   row;
 
     fp = fopen(filename, "w");
     if (!fp) return 0;
 
-	node = buf->head;
+    node = buf->head;
     while (node != NULL) {
-    fputs(node->text, fp);
-    if (node->next != NULL) fputc('\n', fp);
-    node = node->next;
-	}
-	
+        fputs(node->text, fp);
+        if (node->next != NULL) fputc('\n', fp);
+        node = node->next;
+    }
+
     fclose(fp);
     return 1;
 }
 
 
 void fileClose(TextBuffer *buf) {
-	Node *cur = buf->head;
+    Node *cur = buf->head;
+    Node *next;
+
     while (cur != NULL) {
-        Node *next = cur->next;
+        next = cur->next;
         free(cur);
         cur = next;
     }
-    bufferInit(buf);
+
+    buf->head = NULL;
+    buf->totalLines = 0;
+    buf->currentRow = 0;
 }

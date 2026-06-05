@@ -20,7 +20,7 @@ void bufferGoto(TextBuffer *buf, int nomor) {
     buf->currentRow = nomor - 1;
 }
 
-void bufferInsert(TextBuffer *buf, const char *teks) {
+void bufferInsert(TextBuffer *buf, char *teks) {
     Node *node = getNode(buf, buf->currentRow);
     int len = (int)strlen(teks);
     int i;
